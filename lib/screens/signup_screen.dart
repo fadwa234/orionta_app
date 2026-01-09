@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'questionnaire_screen.dart'; // Importez le nouveau questionnaire
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  final int _totalPages = 5;
+  final int _totalPages = 4; // Changé de 5 à 4
 
   // Contrôleurs pour les champs de texte
   final TextEditingController _prenomController = TextEditingController();
@@ -46,18 +47,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // Dernière page - Soumettre le formulaire
-      _submitForm();
+      // Dernière page - Naviguer vers le questionnaire
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const QuestionnaireScreen(),
+        ),
+      );
     }
-  }
-
-  void _submitForm() {
-    // Logique de soumission du formulaire
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Inscription terminée !')),
-    );
-    // Navigation vers la page suivante (ex: HomePage)
-    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
   @override
@@ -93,7 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Expanded(
               child: PageView(
                 controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(), // Désactiver le swipe
+                physics: const NeverScrollableScrollPhysics(),
                 onPageChanged: (int page) {
                   setState(() {
                     _currentPage = page;
@@ -111,17 +108,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                   // Page 4: Domaine d'intérêt
                   _buildDomainPage(),
-
-                  // Page 5: Ajoutez votre contenu ici
-                  _buildPlaceholderPage("Page 5"),
                 ],
               ),
             ),
 
             // Bouton Continuer et indicateur d'étape
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 24.0),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
                     width: double.infinity,
@@ -137,7 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       child: Text(
-                        _currentPage == _totalPages - 1 ? "Terminer" : "Continuer",
+                        _currentPage == _totalPages - 1 ? "Continuer" : "Continuer",
                         style: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
@@ -145,7 +140,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   Text(
                     "Étape ${_currentPage + 1} sur $_totalPages",
                     style: const TextStyle(
@@ -173,7 +168,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const Text(
             'Commençons par vos informations de base',
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
@@ -182,11 +177,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const Text(
             'Nous garderons vos données privées et sécurisées',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               color: Color(0xFF666666),
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
 
           // Prénom
           _buildTextField(
@@ -194,7 +189,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             controller: _prenomController,
             hint: '',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Nom
           _buildTextField(
@@ -202,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             controller: _nomController,
             hint: '',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Email
           _buildTextField(
@@ -211,7 +206,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             hint: '',
             keyboardType: TextInputType.emailAddress,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Université (optionnel)
           _buildTextField(
@@ -219,7 +214,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             controller: _universiteController,
             hint: '',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Mot de passe
           _buildTextField(
@@ -252,21 +247,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const Text(
             'Quel âge avez-vous ?',
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
           const Text(
             'Cela nous aide à vous proposer des programmes adaptés à votre âge',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               color: Color(0xFF666666),
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 60),
+          const SizedBox(height: 48),
 
           // Options d'âge
           ...ageRanges.map((age) => Padding(
@@ -298,21 +293,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const Text(
             'Quel est votre niveau d\'études actuel ?',
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
           const Text(
             'Où en êtes-vous dans votre parcours académique ?',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               color: Color(0xFF666666),
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 60),
+          const SizedBox(height: 48),
 
           // Options de niveau d'études
           ...educationLevels.map((level) => Padding(
@@ -352,21 +347,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const Text(
             'Quel domaine vous intéresse le plus ?',
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
           const Text(
             'Vous pouvez en explorer plusieurs, plus tard.',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               color: Color(0xFF666666),
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 60),
+          const SizedBox(height: 48),
 
           // Options de domaines
           ...domains.map((domain) => Padding(
@@ -426,7 +421,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Widget pour une option d'âge (maintenant utilise le widget réutilisable)
+  // Widget pour une option d'âge
   Widget _buildAgeOption(String age) {
     return _buildSelectionOption(
       age,
@@ -453,7 +448,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 15,
             fontWeight: FontWeight.w500,
             color: Colors.black,
           ),
@@ -498,39 +493,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  // Widget placeholder pour les pages 2-5
-  Widget _buildPlaceholderPage(String pageTitle) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.construction,
-            size: 80,
-            color: const Color(0xFF5B9EF6).withOpacity(0.5),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            pageTitle,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Contenu à ajouter',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF666666),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
