@@ -47,11 +47,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } else {
       // Retour à l'écran d'accueil ou navigation vers inscription
       Navigator.pop(context);
-      // Ou si vous voulez aller vers une page d'inscription:
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const SignUpScreen()),
-      // );
     }
   }
 
@@ -89,7 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Contenu des pages
+            // Contenu des pages avec scroll
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -107,8 +102,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Boutons
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 24.0),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // Bouton Continuer/Commençons
                   SizedBox(
@@ -162,7 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ],
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
                   // Texte Étape
                   Text(
@@ -189,64 +185,71 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 60),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height * 0.6,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 40),
 
-          // Icône bleue en cercle
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFF5B9EF6),
-                width: 4,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF5B9EF6).withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+              // Icône bleue en cercle
+              Container(
+                width: 110,
+                height: 110,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF5B9EF6),
+                    width: 4,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF5B9EF6).withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Icon(
-              data.icon,
-              size: 60,
-              color: const Color(0xFF5B9EF6),
-            ),
-          ),
-          const SizedBox(height: 60),
+                child: Icon(
+                  data.icon,
+                  size: 55,
+                  color: const Color(0xFF5B9EF6),
+                ),
+              ),
+              const SizedBox(height: 50),
 
-          // Titre
-          Text(
-            data.title,
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
+              // Titre
+              Text(
+                data.title,
+                style: const TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
 
-          // Description
-          Text(
-            data.description,
-            style: const TextStyle(
-              fontSize: 17,
-              color: Color(0xFF666666),
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
+              // Description
+              Text(
+                data.description,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF666666),
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+            ],
           ),
-          const SizedBox(height: 60),
-        ],
+        ),
       ),
     );
   }
