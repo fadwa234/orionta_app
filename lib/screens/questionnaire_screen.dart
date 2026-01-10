@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'login_screen.dart';
+
 class QuestionnaireScreen extends StatefulWidget {
   const QuestionnaireScreen({Key? key}) : super(key: key);
 
@@ -46,12 +48,8 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   }
 
   void _submitQuestionnaire() {
-    // Logique de soumission
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Questionnaire terminé !')),
-    );
-    // Navigation vers la page principale
-    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+    // Navigation vers la page de chargement
+    Navigator.pushNamed(context, '/loading');
   }
 
   @override

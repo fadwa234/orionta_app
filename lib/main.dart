@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'screens/welcome_screen.dart';
+import 'screens/onboarding_screen.dart';
+import 'screens/signup_screen.dart';
+import 'screens/questionnaire_screen.dart';
+import 'screens/loading_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/recommendations_screen.dart';
 
 void main() {
   runApp(const OriontaApp());
@@ -18,6 +24,14 @@ class OriontaApp extends StatelessWidget {
         fontFamily: 'Roboto',
       ),
       home: const WelcomeScreen(),
+      routes: {
+        '/onboarding': (context) => const OnboardingScreen(),
+        '/signup': (context) => const SignUpScreen(),
+        '/questionnaire': (context) => const QuestionnaireScreen(),
+        '/loading': (context) => const LoadingScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/recommendations': (context) => const RecommendationsScreen(),
+      },
     );
   }
 }
