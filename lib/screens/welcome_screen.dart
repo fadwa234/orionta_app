@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
+import 'login_screen.dart';
 import 'onboarding_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -69,13 +70,16 @@ class WelcomeScreen extends StatelessWidget {
               CustomButton(
                 text: 'Se connecter',
                 onPressed: () {
-                  // Navigation vers la page de connexion
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Connexion...')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
                   );
                 },
                 isPrimary: false,
               ),
+
 
               const Spacer(flex: 2),
 
