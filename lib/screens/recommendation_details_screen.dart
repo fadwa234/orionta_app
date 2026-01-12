@@ -14,28 +14,41 @@ class RecommendationDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F7FA),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.arrow_back, color: Colors.black87, size: 20),
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFE3F2FD),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: const Text(
-            'Détails de recommandation',
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F4FD),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFF5B9EF6).withOpacity(0.2)),
+              ),
+              child: const Text(
+                'Détails de recommandation',
+                style: TextStyle(
+                  color: Color(0xFF2C3E50),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.3,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
         centerTitle: false,
       ),
@@ -43,80 +56,144 @@ class RecommendationDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // En-tête avec titre et barre de progression
+            // En-tête avec titre et badge de correspondance
             Container(
-              color: Colors.white,
+              margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(24.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Container(
-                        width: 48,
-                        height: 48,
+                        width: 56,
+                        height: 56,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.blue.shade400, Colors.blue.shade700],
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF4A90E2), Color(0xFF357ABD)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF4A90E2).withOpacity(0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        child: const Icon(Icons.analytics, color: Colors.white, size: 26),
+                        child: const Icon(Icons.analytics_rounded, color: Colors.white, size: 28),
                       ),
-                      const SizedBox(width: 12),
-                      const Expanded(
-                        child: Text(
-                          'Data Science & Analytics',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
-                          ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Data Science & Analytics',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF2C3E50),
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8F5E9),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.verified, size: 14, color: Color(0xFF4CAF50)),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '$matchPercentage% de correspondance',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF4CAF50),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'La data science combine les Mathématiques, la programmation et l\'expertise sectorielle pour extraire des insights actionnables à partir de données. Vous apprendrez à utiliser des outils modernes, travailler avec de grands ensembles de données et prédire des tendances. Idéal pour ceux qui aiment résoudre des problèmes complexes et créer de la valeur à partir de l\'information.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF666666),
-                      height: 1.6,
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFB),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFE1E8ED)),
+                    ),
+                    child: const Text(
+                      'La data science combine les Mathématiques, la programmation et l\'expertise sectorielle pour extraire des insights actionnables à partir de données. Vous apprendrez à utiliser des outils modernes, travailler avec de grands ensembles de données et prédire des tendances. Idéal pour ceux qui aiment résoudre des problèmes complexes et créer de la valeur à partir de l\'information.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF546E7A),
+                        height: 1.7,
+                        letterSpacing: 0.2,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 16),
-
             // Section Universités recommandées
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.school, color: Color(0xFF5B9EF6), size: 22),
-                      SizedBox(width: 8),
-                      Text(
-                        'Universités recommandées',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.school_rounded, color: Color(0xFF4A90E2), size: 24),
+                        SizedBox(width: 12),
+                        Text(
+                          'Universités recommandées',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF2C3E50),
+                            letterSpacing: -0.3,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 
                   _buildUniversityCard(
-                    university: 'Université Mohammed V à Rabat',
-                    program: 'Master Data Science & Intelligence Artificielle',
+                    university: 'Université Mohammed V',
                     location: 'Rabat',
+                    program: 'Master Data Science & Intelligence Artificielle',
                     duration: '2 ans',
                     cost: 'Gratuit',
                     language: 'Français',
@@ -124,9 +201,9 @@ class RecommendationDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _buildUniversityCard(
-                    university: 'Université Cadi Ayyad à Marrakech',
-                    program: 'Master Sciences des Données',
+                    university: 'Université Cadi Ayyad',
                     location: 'Marrakech',
+                    program: 'Master Sciences des Données',
                     duration: '2 ans',
                     cost: 'CVDC',
                     language: 'Français',
@@ -134,9 +211,9 @@ class RecommendationDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _buildUniversityCard(
-                    university: 'Université Hassan II à Mohammedia/Casablanca',
-                    program: 'Master Data Sciences',
+                    university: 'Université Hassan II',
                     location: 'Casablanca, Mohammedia',
+                    program: 'Master Data Sciences',
                     duration: '2 ans',
                     cost: 'CVDC',
                     language: 'Français',
@@ -144,9 +221,9 @@ class RecommendationDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _buildUniversityCard(
-                    university: 'Université Sidi Mohamed Ben Abdellah à Fès',
-                    program: 'Master Sciences de l\'information',
+                    university: 'Université Sidi Mohamed Ben Abdellah',
                     location: 'Fès',
+                    program: 'Master Sciences de l\'information',
                     duration: '2 ans',
                     cost: 'CVDC',
                     language: 'Français',
@@ -154,9 +231,9 @@ class RecommendationDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _buildUniversityCard(
-                    university: 'Université Ibn Tofaïl à Kénitra',
-                    program: 'Master Big Data et Intelligence des Données',
+                    university: 'Université Ibn Tofaïl',
                     location: 'Kénitra',
+                    program: 'Master Big Data et Intelligence des Données',
                     duration: '2 ans',
                     cost: 'CVDC',
                     language: 'Français',
@@ -166,19 +243,27 @@ class RecommendationDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // Conditions d'admission
-                  const Row(
-                    children: [
-                      Icon(Icons.check_circle_outline, color: Color(0xFF5B9EF6), size: 22),
-                      SizedBox(width: 8),
-                      Text(
-                        'Conditions d\'admission',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.check_circle_outline_rounded, color: Color(0xFF4A90E2), size: 24),
+                        SizedBox(width: 12),
+                        Text(
+                          'Conditions d\'admission',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF2C3E50),
+                            letterSpacing: -0.3,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 
@@ -186,42 +271,54 @@ class RecommendationDetailsScreen extends StatelessWidget {
                     icon: Icons.calculate_outlined,
                     title: 'Bases en mathématiques',
                     subtitle: 'Statistiques, algèbre linéaire et calcul',
+                    color: const Color(0xFFFF9800),
                   ),
                   const SizedBox(height: 12),
                   _buildAdmissionItem(
-                    icon: Icons.code,
+                    icon: Icons.code_rounded,
                     title: 'Connaissances en programmation',
                     subtitle: 'Python et la structure des données est un prérequis',
+                    color: const Color(0xFF9C27B0),
                   ),
                   const SizedBox(height: 12),
                   _buildAdmissionItem(
                     icon: Icons.psychology_outlined,
                     title: 'Esprit analytique',
                     subtitle: 'Capacité à résoudre des problèmes complexes',
+                    color: const Color(0xFF00BCD4),
                   ),
                   const SizedBox(height: 12),
                   _buildAdmissionItem(
                     icon: Icons.workspace_premium_outlined,
                     title: 'Diplôme de licence',
                     subtitle: 'Licence en informatique, mathématiques, etc.',
+                    color: const Color(0xFF4CAF50),
                   ),
 
                   const SizedBox(height: 32),
 
                   // Compétences développées
-                  const Row(
-                    children: [
-                      Icon(Icons.trending_up, color: Color(0xFF5B9EF6), size: 22),
-                      SizedBox(width: 8),
-                      Text(
-                        'Compétences que vous développerez',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.trending_up_rounded, color: Color(0xFF4A90E2), size: 24),
+                        SizedBox(width: 12),
+                        Text(
+                          'Compétences que vous développerez',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF2C3E50),
+                            letterSpacing: -0.3,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 
@@ -230,71 +327,102 @@ class RecommendationDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // Débouchés professionnels
-                  const Row(
-                    children: [
-                      Icon(Icons.business_center_outlined, color: Color(0xFF5B9EF6), size: 22),
-                      SizedBox(width: 8),
-                      Text(
-                        'Débouchés professionnels & salaires',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.work_outline_rounded, color: Color(0xFF4A90E2), size: 24),
+                        SizedBox(width: 12),
+                        Text(
+                          'Débouchés professionnels & salaires',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF2C3E50),
+                            letterSpacing: -0.3,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 
                   _buildJobCard(
-                    title: 'Data analyst',
+                    title: 'Data Analyst',
                     badge: 'Forte demande',
-                    salary: '60 000 - 140 000 MAD / 12 Mois (Marrakech)',
+                    salary: '60 000 - 140 000 MAD / an',
+                    location: 'Marrakech',
                     details: '15 postes publiés ce mois-ci',
                   ),
                   const SizedBox(height: 12),
                   _buildJobCard(
-                    title: 'Numéro carrière Enseigné',
+                    title: 'Data Engineer',
                     badge: 'Forte demande',
-                    salary: '80 000 - 180 000 MAD / 12 Mois (Casablanca)',
-                    details: 'UX/UI designer de product design',
+                    salary: '80 000 - 180 000 MAD / an',
+                    location: 'Casablanca',
+                    details: 'Conception et maintenance de pipelines de données',
                   ),
                   const SizedBox(height: 12),
                   _buildJobCard(
                     title: 'Business Intelligence Analyst',
                     badge: 'Forte demande',
-                    salary: '75 000 - 200 000 MAD / 12 Mois (Rabat)',
-                    details: 'Analysez les données',
+                    salary: '75 000 - 200 000 MAD / an',
+                    location: 'Rabat',
+                    details: 'Analyse et visualisation des données d\'entreprise',
                   ),
 
                   const SizedBox(height: 32),
 
                   // Bouton Créer un plan d'action
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ActionPlanScreen(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF5B9EF6),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF4A90E2).withOpacity(0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
                         ),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        "Créer un plan d'action",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                      ],
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ActionPlanScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4A90E2),
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.assignment_turned_in_rounded, size: 22),
+                            const SizedBox(width: 12),
+                            const Text(
+                              "Créer un plan d'action",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -312,21 +440,22 @@ class RecommendationDetailsScreen extends StatelessWidget {
 
   Widget _buildUniversityCard({
     required String university,
-    required String program,
     required String location,
+    required String program,
     required String duration,
     required String cost,
     required String language,
     required double rating,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE1E8ED)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -338,6 +467,16 @@ class RecommendationDetailsScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0F4F8),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.account_balance, color: Color(0xFF4A90E2), size: 24),
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,71 +486,100 @@ class RecommendationDetailsScreen extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black,
+                        color: Color(0xFF2C3E50),
+                        letterSpacing: -0.2,
                       ),
                     ),
                     const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on_outlined, size: 14, color: Color(0xFF90A4AE)),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            location,
+                            style: const TextStyle(fontSize: 12, color: Color(0xFF90A4AE)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF8E1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.star_rounded, color: Color(0xFFFFB300), size: 16),
+                    const SizedBox(width: 4),
                     Text(
-                      program,
+                      rating.toString(),
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Color(0xFF666666),
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFFFB300),
                       ),
                     ),
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.amber, size: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    rating.toString(),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
-              const SizedBox(width: 4),
-              Text(
-                location,
-                style: const TextStyle(fontSize: 13, color: Color(0xFF999999)),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFB),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              program,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF546E7A),
+                height: 1.4,
               ),
-            ],
+            ),
           ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildInfoChip('Durée', duration),
-              _buildInfoChip('Prix', cost),
-              _buildInfoChip('Langue', language),
+              _buildInfoChip(Icons.schedule_rounded, duration, const Color(0xFF4A90E2)),
+              _buildInfoChip(Icons.payments_outlined, cost, const Color(0xFF4CAF50)),
+              _buildInfoChip(Icons.language_rounded, language, const Color(0xFF9C27B0)),
             ],
           ),
           const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF5B9EF6),
-                padding: EdgeInsets.zero,
+          InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F4F8),
+                borderRadius: BorderRadius.circular(8),
               ),
-              icon: const Text(
-                'Visiter le site web de l\'université',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Visiter le site web',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF4A90E2),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(Icons.arrow_forward_rounded, size: 16, color: Color(0xFF4A90E2)),
+                ],
               ),
-              label: const Icon(Icons.open_in_new, size: 14),
             ),
           ),
         ],
@@ -419,29 +587,25 @@ class RecommendationDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoChip(String label, String value) {
+  Widget _buildInfoChip(IconData icon, String value, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(6),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.2)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              color: Color(0xFF999999),
-            ),
-          ),
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 6),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: color,
             ),
           ),
         ],
@@ -453,16 +617,18 @@ class RecommendationDetailsScreen extends StatelessWidget {
     required IconData icon,
     required String title,
     required String subtitle,
+    required Color color,
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE1E8ED)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -470,14 +636,14 @@ class RecommendationDetailsScreen extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
-              shape: BoxShape.circle,
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: const Color(0xFF666666), size: 22),
+            child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,16 +652,18 @@ class RecommendationDetailsScreen extends StatelessWidget {
                   title,
                   style: const TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF2C3E50),
+                    letterSpacing: -0.2,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   subtitle,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Color(0xFF666666),
+                    color: Color(0xFF546E7A),
+                    height: 1.4,
                   ),
                 ),
               ],
@@ -512,9 +680,10 @@ class RecommendationDetailsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE1E8ED)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -523,43 +692,46 @@ class RecommendationDetailsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCompetenceItem('Programmation Python : R et Python pour l\'analyse'),
-          const Divider(height: 24),
-          _buildCompetenceItem('Visualisation des données : Créez des tableaux de bord et des graphiques'),
-          const Divider(height: 24),
-          _buildCompetenceItem('Modélisation prédictive : Développez des modèles pour prédire les tendances'),
-          const Divider(height: 24),
-          _buildCompetenceItem('Analyse SQL : Gérez et explorez des bases de données'),
-          const Divider(height: 24),
-          _buildCompetenceItem('Machine Learning : Construisez des systèmes intelligents'),
-          const Divider(height: 24),
-          _buildCompetenceItem('Statistiques avancées : Interprétez les données avec précision'),
+          _buildCompetenceItem('Programmation Python : R et Python pour l\'analyse', Icons.code_rounded),
+          const SizedBox(height: 16),
+          _buildCompetenceItem('Visualisation des données : Créez des tableaux de bord et des graphiques', Icons.bar_chart_rounded),
+          const SizedBox(height: 16),
+          _buildCompetenceItem('Modélisation prédictive : Développez des modèles pour prédire les tendances', Icons.trending_up_rounded),
+          const SizedBox(height: 16),
+          _buildCompetenceItem('Analyse SQL : Gérez et explorez des bases de données', Icons.storage_rounded),
+          const SizedBox(height: 16),
+          _buildCompetenceItem('Machine Learning : Construisez des systèmes intelligents', Icons.psychology_rounded),
+          const SizedBox(height: 16),
+          _buildCompetenceItem('Statistiques avancées : Interprétez les données avec précision', Icons.analytics_rounded),
         ],
       ),
     );
   }
 
-  Widget _buildCompetenceItem(String text) {
+  Widget _buildCompetenceItem(String text, IconData icon) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 4),
-          width: 6,
-          height: 6,
-          decoration: const BoxDecoration(
-            color: Color(0xFF5B9EF6),
-            shape: BoxShape.circle,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE8F4FD),
+            borderRadius: BorderRadius.circular(8),
           ),
+          child: Icon(icon, size: 18, color: const Color(0xFF4A90E2)),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF333333),
-              height: 1.5,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF2C3E50),
+                height: 1.5,
+                letterSpacing: 0.1,
+              ),
             ),
           ),
         ),
@@ -571,16 +743,18 @@ class RecommendationDetailsScreen extends StatelessWidget {
     required String title,
     required String badge,
     required String salary,
+    required String location,
     required String details,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE1E8ED)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -590,48 +764,101 @@ class RecommendationDetailsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF4A90E2), Color(0xFF357ABD)],
                   ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.work_outline_rounded, color: Colors.white, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF2C3E50),
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on_outlined, size: 14, color: Color(0xFF90A4AE)),
+                        const SizedBox(width: 4),
+                        Text(
+                          location,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF90A4AE),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE3F2FD),
-                  borderRadius: BorderRadius.circular(12),
+                  color: const Color(0xFFE8F5E9),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.3)),
                 ),
                 child: Text(
                   badge,
                   style: const TextStyle(
                     fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF5B9EF6),
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF4CAF50),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            salary,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF666666),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFB),
+              borderRadius: BorderRadius.circular(10),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            details,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF999999),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.payments_outlined, size: 16, color: Color(0xFF4A90E2)),
+                    const SizedBox(width: 8),
+                    Text(
+                      salary,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF2C3E50),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  details,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF546E7A),
+                    height: 1.4,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
