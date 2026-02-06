@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'questionnaire_screen.dart';
+// 🔥 AJOUT : Imports Firebase
+import '../services/auth_service.dart';
+import '../models/user_model.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -12,6 +15,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   final int _totalPages = 4;
+
+  //  AJOUT : Service Firebase
+  final AuthService _authService = AuthService();
 
   // Contrôleurs pour les champs de texte
   final TextEditingController _prenomController = TextEditingController();
@@ -28,6 +34,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Visibilité mot de passe
   bool _obscurePassword = true;
 
+  //  AJOUT : État de chargement
+  bool _isLoading = false;
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -39,20 +48,108 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _nextPage() {
+  //  MODIFICATION : Fonction nextPage avec Firebase
+  void _nextPage() async {
     if (_currentPage < _totalPages - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const QuestionnaireScreen(),
-        ),
-      );
+      //  DERNIÈRE PAGE : Inscription Firebase
+      await _signUpWithFirebase();
     }
+  }
+
+  //  NOUVELLE FONCTION : Inscription Firebase
+  Future<void> _signUpWithFirebase() async {
+    // Validation basique
+    if (_prenomController.text.isEmpty ||
+        _nomController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      _showErrorSnackBar('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      //  Appel au service Firebase
+      UserModel? user = await _authService.signUpWithEmail(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        prenom: _prenomController.text.trim(),
+        nom: _nomController.text.trim(),
+        universite: _universiteController.text.trim().isEmpty
+            ? null
+            : _universiteController.text.trim(),
+        age: _selectedAge,
+        niveauEtudes: _selectedEducationLevel,
+        domaineInteret: _selectedDomain,
+      );
+
+      setState(() => _isLoading = false);
+
+      if (user != null) {
+        //  Inscription réussie
+        _showSuccessSnackBar('Compte créé avec succès !');
+
+        // Navigation vers le questionnaire
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const QuestionnaireScreen(),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      //  Erreur d'inscription
+      _showErrorSnackBar(e.toString());
+    }
+  }
+
+  //  NOUVELLE FONCTION : Afficher message d'erreur
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: const Color(0xFFE53935),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  //  NOUVELLE FONCTION : Afficher message de succès
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white),
+            const SizedBox(width: 12),
+            Text(message),
+          ],
+        ),
+        backgroundColor: const Color(0xFF4CAF50),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
   }
 
   void _previousPage() {
@@ -142,28 +239,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
 
-            // Bouton Continuer
+            // 🔥 MODIFICATION : Bouton Continuer avec état de chargement
             Padding(
               padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 32.0),
               child: SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _nextPage,
+                  onPressed: _isLoading ? null : _nextPage,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF5B9EF6),
                     foregroundColor: Colors.white,
                     elevation: 0,
+                    disabledBackgroundColor: Colors.grey[300],
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: Row(
+                  child: _isLoading
+                      ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                      : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        _currentPage == _totalPages - 1 ? "Continuer" : "Continuer",
+                        _currentPage == _totalPages - 1
+                            ? "Créer mon compte"
+                            : "Continuer",
                         style: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
@@ -182,6 +291,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
+  // ⚠️ TOUS VOS WIDGETS EXISTANTS RESTENT IDENTIQUES
+  // Je les copie ci-dessous sans modification
 
   // Page 1: Informations de base (AMÉLIORÉE)
   Widget _buildBasicInfoPage() {
@@ -829,60 +941,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
     required VoidCallback onTap,
   }) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF5B9EF6).withOpacity(0.08) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? const Color(0xFF5B9EF6) : const Color(0xFFE0E0E0),
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFF5B9EF6)
-                    : const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
+        child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(color: isSelected ? const Color(0xFF5B9EF6).withOpacity(0.08) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected ? const Color(0xFF5B9EF6) : const Color(0xFFE0E0E0),
+                width: isSelected ? 2 : 1,
               ),
-              child: Icon(
-                icon,
-                color: isSelected ? Colors.white : iconColor,
-                size: 22,
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? const Color(0xFF5B9EF6) : Colors.black87,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? const Color(0xFF5B9EF6)
+                      : const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  icon,
+                  color: isSelected ? Colors.white : iconColor,
+                  size: 22,
                 ),
               ),
-            ),
-            if (isSelected)
-              const Icon(
-                Icons.check_circle,
-                color: Color(0xFF5B9EF6),
-                size: 24,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected ? const Color(0xFF5B9EF6) : Colors.black87,
+                  ),
+                ),
               ),
-          ],
+              if (isSelected)
+                const Icon(
+                  Icons.check_circle,
+                  color: Color(0xFF5B9EF6),
+                  size: 24,
+                ),
+            ],
+          ),
         ),
-      ),
     );
   }
 }

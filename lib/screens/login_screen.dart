@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'forgot_password_screen.dart';
+import 'dashboard_screen.dart';
+// 🔥 AJOUT : Imports Firebase
+import '../services/auth_service.dart';
+import '../models/user_model.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -10,6 +13,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+  // 🔥 AJOUT : Service Firebase
+  final AuthService _authService = AuthService();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -40,42 +46,73 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     super.dispose();
   }
 
+  // 🔥 MODIFICATION : Fonction login avec Firebase
   void _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Simulation d'une connexion
-      await Future.delayed(const Duration(seconds: 2));
-
-      setState(() => _isLoading = false);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 12),
-                Text('Connexion réussie !'),
-              ],
-            ),
-            backgroundColor: const Color(0xFF4CAF50),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
+      try {
+        // 🔥 Appel au service Firebase
+        UserModel? user = await _authService.signInWithEmail(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
         );
-        // Navigation vers la page d'accueil
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+
+        setState(() => _isLoading = false);
+
+        if (user != null && mounted) {
+          // ✅ Connexion réussie
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Text('Bienvenue ${user.prenom} !'),
+                ],
+              ),
+              backgroundColor: const Color(0xFF4CAF50),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+
+          // Navigation vers le Dashboard
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          );
+        }
+      } catch (e) {
+        setState(() => _isLoading = false);
+
+        // ❌ Erreur de connexion
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(e.toString())),
+                ],
+              ),
+              backgroundColor: const Color(0xFFE53935),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
       }
     }
   }
 
   void _navigateToSignUp() {
     Navigator.pop(context);
-    // Ou si vous voulez aller directement à SignUpScreen:
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordScreen()));
   }
 
   String? _validateEmail(String? value) {
@@ -345,7 +382,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                           const SizedBox(height: 10),

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+// 🔥 AJOUT : Imports Firebase
+import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
+import '../models/questionnaire_model.dart';
 
 class QuestionnaireScreen extends StatefulWidget {
   const QuestionnaireScreen({Key? key}) : super(key: key);
@@ -12,11 +16,18 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   int _currentPage = 0;
   final int _totalPages = 4;
 
+  // 🔥 AJOUT : Services Firebase
+  final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
+
   // Réponses sélectionnées
   String? _workPreference;
   String? _learningEnvironment;
   String? _motivation;
   String? _futureVision;
+
+  // 🔥 AJOUT : État de chargement
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -70,8 +81,60 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
     }
   }
 
-  void _submitQuestionnaire() {
-    Navigator.pushNamed(context, '/loading');
+  // 🔥 MODIFICATION : Soumission avec Firebase
+  void _submitQuestionnaire() async {
+    setState(() => _isLoading = true);
+
+    try {
+      // 🔥 Récupérer l'utilisateur actuel
+      final currentUser = _authService.currentUser;
+
+      if (currentUser == null) {
+        throw Exception('Utilisateur non connecté');
+      }
+
+      // 🔥 Créer le modèle questionnaire
+      final questionnaire = QuestionnaireModel(
+        userId: currentUser.uid,
+        workPreference: _workPreference,
+        learningEnvironment: _learningEnvironment,
+        motivation: _motivation,
+        futureVision: _futureVision,
+        completedAt: DateTime.now(),
+      );
+
+      // 🔥 Sauvegarder dans Firestore
+      await _firestoreService.saveQuestionnaire(questionnaire);
+
+      setState(() => _isLoading = false);
+
+      // ✅ Navigation vers loading
+      if (mounted) {
+        Navigator.pushNamed(context, '/loading');
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+
+      // ❌ Afficher l'erreur
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text('Erreur : ${e.toString()}')),
+              ],
+            ),
+            backgroundColor: const Color(0xFFE53935),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -273,7 +336,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
               ),
             ),
 
-            // Boutons en bas avec design amélioré
+            // 🔥 MODIFICATION : Boutons en bas avec loading
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -294,17 +357,27 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: _nextPage,
+                      onPressed: _isLoading ? null : _nextPage,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5B9EF6),
                         foregroundColor: Colors.white,
                         elevation: 0,
+                        disabledBackgroundColor: Colors.grey[300],
                         shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: Row(
+                      child: _isLoading
+                          ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                          : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -328,7 +401,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
                   ),
 
                   // Bouton Retour
-                  if (_currentPage > 0) ...[
+                  if (_currentPage > 0 && !_isLoading) ...[
                     const SizedBox(height: 12),
                     SizedBox(
                       width: double.infinity,

@@ -28,13 +28,28 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  flutter:
-    sdk: flutter
-  font_awesome_flutter: ^10.7.0
+    flutter:
+      sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+    cupertino_icons: ^1.0.2
+
+    # ========== FIREBASE CORE (OBLIGATOIRE) ==========
+    firebase_core: ^2.32.0
+
+    # ========== FIREBASE AUTHENTICATION ==========
+    firebase_auth: ^4.15.3
+
+    # ========== CLOUD FIRESTORE (BASE DE DONNÉES) ==========
+    cloud_firestore: ^4.13.6
+
+    # ========== FIREBASE STORAGE (OPTIONNEL) ==========
+    firebase_storage: ^11.5.6
+
+    # ========== GESTION D'ÉTAT ==========
+    provider: ^6.1.1
+
+    # ========== STOCKAGE LOCAL ==========
+    shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

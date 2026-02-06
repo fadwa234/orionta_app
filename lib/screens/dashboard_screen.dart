@@ -4,9 +4,53 @@ import 'action_plan.dart';
 import 'profile_screen.dart';
 import 'Temoignages_screen.dart';
 import 'settings_screen.dart';
+// 🔥 AJOUT : Imports Firebase
+import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
+import '../models/user_model.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  // 🔥 AJOUT : Services Firebase
+  final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
+
+  // 🔥 AJOUT : Données utilisateur
+  UserModel? _currentUser;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  // 🔥 NOUVELLE FONCTION : Charger les données utilisateur
+  Future<void> _loadUserData() async {
+    try {
+      final user = _authService.currentUser;
+      if (user != null) {
+        final userData = await _firestoreService.getUser(user.uid);
+        if (mounted) {
+          setState(() {
+            _currentUser = userData;
+            _isLoading = false;
+          });
+        }
+      } else {
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      print('Erreur chargement utilisateur : $e');
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +93,18 @@ class DashboardScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: _isLoading
+            ? const Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFF4A90E2),
+          ),
+        )
+            : SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // En-tête de bienvenue
+              // 🔥 MODIFICATION : En-tête de bienvenue avec données réelles
               const Text(
                 'Bon retour,',
                 style: TextStyle(
@@ -65,9 +115,11 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'IRAMDANE Imane',
-                style: TextStyle(
+              Text(
+                _currentUser != null
+                    ? '${_currentUser!.prenom} ${_currentUser!.nom}'
+                    : 'Utilisateur',
+                style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF2C3E50),

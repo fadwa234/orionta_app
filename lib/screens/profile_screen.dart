@@ -1,7 +1,53 @@
 import 'package:flutter/material.dart';
+//  AJOUT : Imports Firebase
+import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
+import '../models/user_model.dart';
+//  AJOUT : Import de la page d'édition
+import 'edit_profile_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  // AJOUT : Services Firebase
+  final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
+
+  //  AJOUT : Données utilisateur
+  UserModel? _currentUser;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  //  NOUVELLE FONCTION : Charger les données utilisateur
+  Future<void> _loadUserData() async {
+    try {
+      final user = _authService.currentUser;
+      if (user != null) {
+        final userData = await _firestoreService.getUser(user.uid);
+        if (mounted) {
+          setState(() {
+            _currentUser = userData;
+            _isLoading = false;
+          });
+        }
+      } else {
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      print('Erreur chargement utilisateur : $e');
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +68,21 @@ class ProfileScreen extends StatelessWidget {
                     },
                   ),
                   const Spacer(),
+                  //  MODIFICATION : Navigation vers EditProfileScreen
                   TextButton.icon(
-                    onPressed: () {
-                      // Navigation vers édition
+                    onPressed: () async {
+                      // Navigation vers la page de modification
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfileScreen(),
+                        ),
+                      );
+
+                      // Si la modification a réussi, recharger les données
+                      if (result == true) {
+                        _loadUserData();
+                      }
                     },
                     icon: const Icon(
                       Icons.edit,
@@ -46,7 +104,23 @@ class ProfileScreen extends StatelessWidget {
 
             // Contenu
             Expanded(
-              child: SingleChildScrollView(
+              child: _isLoading
+                  ? const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF5B9EF6),
+                ),
+              )
+                  : _currentUser == null
+                  ? const Center(
+                child: Text(
+                  'Aucune donnée utilisateur',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF666666),
+                  ),
+                ),
+              )
+                  : SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,27 +144,32 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 32),
 
-                    // Carte Informations personnelles
+                    //  MODIFICATION : Carte Informations personnelles avec données réelles
                     _buildInfoCard(
                       title: 'Informations personnelles',
                       items: {
-                        'Prénom': 'Hajar',
-                        'Nom': 'CHAOUCH',
-                        'Email': 'hajar.chaouch@gmail.com',
-                        'University': 'Not specified',
+                        'Prénom': _currentUser!.prenom,
+                        'Nom': _currentUser!.nom,
+                        'Email': _currentUser!.email,
+                        'Université':
+                        _currentUser!.universite ?? 'Non spécifiée',
                       },
                     ),
 
                     const SizedBox(height: 24),
 
-                    // Carte Informations académiques
+                    //  MODIFICATION : Carte Informations académiques avec données réelles
                     _buildInfoCard(
                       title: 'Informations académiques',
                       items: {
-                        'Tranche d\'age': '18-20',
-                        'Niveau d\'études': 'en licence',
-                        'Domaine d\'interet': 'informatique et technologie',
-                        'University': 'Not specified',
+                        'Tranche d\'âge':
+                        _currentUser!.age ?? 'Non spécifiée',
+                        'Niveau d\'études':
+                        _currentUser!.niveauEtudes ?? 'Non spécifié',
+                        'Domaine d\'intérêt':
+                        _currentUser!.domaineInteret ?? 'Non spécifié',
+                        'Date d\'inscription':
+                        _formatDate(_currentUser!.createdAt),
                       },
                     ),
 
@@ -126,6 +205,25 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  //  NOUVELLE FONCTION : Formater la date
+  String _formatDate(DateTime date) {
+    final months = [
+      'janvier',
+      'février',
+      'mars',
+      'avril',
+      'mai',
+      'juin',
+      'juillet',
+      'août',
+      'septembre',
+      'octobre',
+      'novembre',
+      'décembre'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
   Widget _buildInfoCard({

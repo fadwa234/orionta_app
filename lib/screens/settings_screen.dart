@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+// 🔥 AJOUT : Imports Firebase
+import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
+import '../models/user_model.dart';
+import 'edit_profile_screen.dart';
+import 'faq_screen.dart';
+import 'contact_screen.dart';
+import 'terms_screen.dart';
+import 'privacy_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -8,8 +17,44 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  // Services Firebase
+  final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
+
+  // AJOUT : Variables pour l'utilisateur
+  UserModel? _currentUser;
+  bool _isLoading = true;
+
   bool _emailNotifications = true;
   bool _pushNotifications = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  //  AJOUT : Charger les données utilisateur
+  Future<void> _loadUserData() async {
+    try {
+      final user = _authService.currentUser;
+      if (user != null) {
+        final userData = await _firestoreService.getUser(user.uid);
+        if (mounted) {
+          setState(() {
+            _currentUser = userData;
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,12 +97,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // Contenu
             Expanded(
-              child: SingleChildScrollView(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Carte de profil
+                    // Carte de profil avec nom utilisateur
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -92,27 +139,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // MODIFICATION : Afficher le vrai nom
                                 Text(
-                                  'Utilisateur',
-                                  style: TextStyle(
+                                  _currentUser != null
+                                      ? '${_currentUser!.prenom} ${_currentUser!.nom}'
+                                      : 'Utilisateur',
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
                                     letterSpacing: -0.3,
                                   ),
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
+                                // AJOUT : Afficher l'email
                                 Text(
-                                  'Gérez votre compte et vos préférences',
-                                  style: TextStyle(
+                                  _currentUser?.email ?? '',
+                                  style: const TextStyle(
                                     fontSize: 13,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w400,
                                   ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
@@ -150,6 +202,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: 'Modifier le profil',
                           subtitle: 'Changez vos informations personnelles',
                           onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                            );
                             // Navigation vers modification profil
                           },
                         ),
@@ -227,6 +283,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: 'FAQ',
                           subtitle: 'Questions et réponses courantes',
                           onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const FAQScreen()),
+                            );
                             // Navigation vers FAQ
                           },
                         ),
@@ -238,6 +298,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: 'Contacter l\'assistance',
                           subtitle: 'Bénéficier de l\'aide de notre équipe',
                           onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ContactScreen()),
+                            );
                             // Navigation vers contact
                           },
                         ),
@@ -249,6 +313,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: 'Conditions d\'utilisation',
                           subtitle: 'Lisez nos termes et conditions',
                           onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const TermsScreen()),
+                            );
                             // Navigation vers conditions
                           },
                         ),
@@ -260,6 +328,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: 'Politique de confidentialité',
                           subtitle: 'Comment nous protégeons vos données',
                           onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const PrivacyScreen()),
+                            );
                             // Navigation vers politique
                           },
                         ),
@@ -409,10 +481,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             if (showArrow)
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 16,
-                color: const Color(0xFF90A4AE),
+                color: Color(0xFF90A4AE),
               ),
           ],
         ),
@@ -549,14 +621,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context);
-                // Navigation vers WelcomeScreen
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/',
-                      (route) => false,
-                );
+
+                try {
+                  await _authService.signOut();
+
+                  if (mounted) {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/',
+                          (route) => false,
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Erreur de déconnexion : ${e.toString()}'),
+                        backgroundColor: const Color(0xFFE53935),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    );
+                  }
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE53935),

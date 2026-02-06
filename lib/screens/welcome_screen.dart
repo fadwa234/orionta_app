@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
 import 'login_screen.dart';
 import 'onboarding_screen.dart';
+import '../services/firebase_service.dart';
+
+
+
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

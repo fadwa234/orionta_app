@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1038135200519",
+    "project_id": "oriontaapp",
+    "storage_bucket": "oriontaapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038135200519:android:7d8ac39a0dcf47fa3413a2",
+        "android_client_info": {
+          "package_name": "com.example.orionta_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo_gvKbgAjDg6AS0a9JMDRX1VcdECwo9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

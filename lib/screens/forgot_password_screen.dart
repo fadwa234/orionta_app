@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+//  AJOUT : Import Firebase
+import '../services/auth_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -8,6 +10,9 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with SingleTickerProviderStateMixin {
+  //  AJOUT : Service Firebase
+  final AuthService _authService = AuthService();
+
   final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -36,17 +41,73 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Single
     super.dispose();
   }
 
+  //  MODIFICATION : Envoi avec Firebase
   void _sendResetLink() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Simulation d'envoi d'email
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        //  Appel Firebase
+        await _authService.resetPassword(_emailController.text.trim());
 
-      setState(() {
-        _isLoading = false;
-        _emailSent = true;
-      });
+        setState(() {
+          _isLoading = false;
+          _emailSent = true;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.white),
+                  SizedBox(width: 12),
+                  Text('E-mail de réinitialisation envoyé !'),
+                ],
+              ),
+              backgroundColor: const Color(0xFF4CAF50),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        setState(() => _isLoading = false);
+
+        //  Afficher l'erreur
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(e.toString())),
+                ],
+              ),
+              backgroundColor: const Color(0xFFE53935),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  //  MODIFICATION : Renvoi avec Firebase
+  void _resendEmail() async {
+    setState(() => _isLoading = true);
+
+    try {
+      //  Appel Firebase
+      await _authService.resetPassword(_emailController.text.trim());
+
+      setState(() => _isLoading = false);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -55,7 +116,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Single
               children: [
                 Icon(Icons.check_circle, color: Colors.white),
                 SizedBox(width: 12),
-                Text('E-mail de réinitialisation envoyé !'),
+                Text('E-mail renvoyé avec succès !'),
               ],
             ),
             backgroundColor: const Color(0xFF4CAF50),
@@ -66,34 +127,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Single
           ),
         );
       }
-    }
-  }
+    } catch (e) {
+      setState(() => _isLoading = false);
 
-  void _resendEmail() async {
-    setState(() => _isLoading = true);
-
-    // Simulation d'envoi d'email
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() => _isLoading = false);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 12),
-              Text('E-mail renvoyé avec succès !'),
-            ],
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text(e.toString())),
+              ],
+            ),
+            backgroundColor: const Color(0xFFE53935),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
-          backgroundColor: const Color(0xFF4CAF50),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+        );
+      }
     }
   }
 
